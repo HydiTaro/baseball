@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.baseball.dao.VerifyBatOrderDao">
+
+    <select id="getHittersFromTeam" parameterType="int">
+        SELECT
+            p.player_id as playerId,
+            m.fname as fname,
+            m.lname as lname,
+            p.bat as bat,
+            p.homerun_num as homerun,
+            p.obp as obp,
+            p.steal_success as steal,
+            p.bunt as bunt,
+            m.position,
+            m.hit_hand as hitHand
+        FROM
+            hitter_from_npb_official_2024 as p
+        INNER JOIN
+            player_master as m
+            ON m.player_id = p.player_id
+        WHERE
+            m.team_id = #{conditionEntity}
+        ORDER BY 
+            p.bat desc
+    </select>
+    <select id="getPitchersFromTeam" parameterType="int">
+        SELECT
+            p.player_id as playerId,
+            m.fname as fname,
+            m.lname as lname,
+            p.games as games,
+            p.innings as innings,
+            p.earned_run_average as era,
+            p.homeruns as homerun,
+            (p.fourball + p.got_walked + dead_ball) as fourball,
+            p.wild_pitch as wildPitch,
+            m.position,
+            m.throw_hand as throwHand
+        FROM
+            pitcher_from_npb_official_2024 as p
+        INNER JOIN
+            player_master as m
+            ON p.player_id = m.player_id
+        WHERE
+            m.team_id = #{conditionEntity}
+        ORDER BY 
+            p.innings desc 
+    </select>
+
+</mapper>

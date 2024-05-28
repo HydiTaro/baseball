@@ -1,0 +1,424 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.baseball.dao.ScrapeNpbOfficialDao">
+    <!--
+    <insert id="insertPlayerMaster" parameterType="java.util.List">
+        INSERT INTO player_master (
+            fname,
+            lname,
+            position, 
+            throw_hand,
+            hit_hand,
+            age,
+            start_year,
+            fin_year,
+            team_id
+        )
+        VALUES
+         <foreach collection="conditionEntity" item="listEntity" separator=",">
+           (
+                #{listEntity.fname},
+                #{listEntity.lname}, 
+                #{listEntity.position},
+                #{listEntity.throwHand},
+                #{listEntity.hitHand},
+                #{listEntity.age},
+                #{listEntity.yearOfInfo}),
+                #{listEntity.yearOfInfo},
+                #{listEntity.teamId}
+            WHERE
+                NOT EXISTS (
+                    SELECT 1
+                    FROM player_master
+                    WHERE team_id = #{listEntity.teamId}
+                      AND fname = #{listEntity.fname}
+                      AND lname = #{listEntity.lname}
+                )
+            )
+        </foreach>
+    </insert>
+    -->
+    <insert id="insertPlayerMaster" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity" separator=";">
+            IF NOT EXISTS (
+                SELECT 1
+                FROM player_master
+                WHERE team_id = #{listEntity.teamId}
+                  AND fname = #{listEntity.fname}
+                  AND lname = #{listEntity.lname}
+            )
+            BEGIN
+                INSERT INTO player_master (
+                    fname,
+                    lname,
+                    position, 
+                    throw_hand,
+                    hit_hand,
+                    age,
+                    start_year,
+                    fin_year,
+                    team_id
+                )
+                VALUES (
+                    #{listEntity.fname},
+                    #{listEntity.lname}, 
+                    #{listEntity.position},
+                    #{listEntity.throwHand},
+                    #{listEntity.hitHand},
+                    #{listEntity.age},
+                    #{listEntity.yearOfInfo},
+                    #{listEntity.yearOfInfo},
+                    #{listEntity.teamId}
+                )
+            END
+        </foreach>
+    </insert>
+        
+    <update id="updatePlayerMasterThrowHand">
+        <foreach collection="conditionEntity" item="listEntity">
+            UPDATE 
+                player_master
+            SET
+                position = #{listEntity.position},
+                throw_hand = #{listEntity.throwHand}                
+            WHERE 
+                team_id = #{listEntity.teamId}
+                AND fname = #{listEntity.fname}
+                AND lname = #{listEntity.lname}
+        </foreach>
+    </update>
+    
+   <insert id="insertHitterPerTeamAndYear" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity">
+            IF NOT EXISTS (
+                SELECT 1
+                FROM hitter_from_npb_official
+                WHERE player_id = (
+                            SELECT player_id
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                         )
+                  AND year = #{listEntity.yearOfInfo}
+            )
+            BEGIN
+                INSERT INTO hitter_from_npb_official    (
+                        player_id, "year", games, plate_appearance
+                        ,at_bat, score,hit_num
+                        ,double_num, triple_num, homerun_num
+                        ,total_bases, rbi, steal_success
+                        ,steal_failure, bunt, sacrifice_fly
+                        ,fourball, got_walked, dead_ball
+                        ,kk, double_play, bat
+                        ,slu , obp
+                )
+                 VALUES (
+                        (SELECT player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                            ),
+                        #{listEntity.yearOfInfo}, #{listEntity.games}, #{listEntity.plateAppearance}
+                        ,#{listEntity.atBats}, #{listEntity.runs}, #{listEntity.totalHits}
+                        ,#{listEntity.doubles}, #{listEntity.triples}, #{listEntity.homeruns}
+                        ,#{listEntity.totalBases}, #{listEntity.rbi}, #{listEntity.stolenBases}
+                        ,#{listEntity.stolenBaseDeath}, #{listEntity.sacrificeBunts}, #{listEntity.sacrificeFlies}
+                        ,#{listEntity.fourBalls}, #{listEntity.gotWalked}, #{listEntity.deadBalls}
+                        ,#{listEntity.strikeOuts}, #{listEntity.doublePlay}, #{listEntity.battingAverage}
+                        ,#{listEntity.sluggingPercentage}, #{listEntity.onBasePercentage  }
+                )
+            END
+        </foreach>
+    </insert>
+    
+   <insert id="insertPitcherPerTeamAndYear" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity">
+            IF NOT EXISTS (
+                SELECT 1
+                FROM pitcher_from_npb_official
+                WHERE player_id = (
+                            SELECT player_id
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                         )
+                  AND year = #{listEntity.yearOfInfo}
+            )
+            BEGIN
+                INSERT INTO pitcher_from_npb_official ( 
+                    player_id
+                    , "year", games, win_num
+                    , lose_num, save_num, hold
+                    , hold_point
+                    , complete_game
+                    , whitewash_win_num
+                    , no_walk
+                    , win_rate
+                    , against_batters
+                    , innings
+                    , hits
+                    , homeruns
+                    , fourball
+                    , got_walked
+                    , dead_ball
+                    , wild_pitch
+                    , bork
+                    , kk
+                    , allowed_runs
+                    , earned_run_average
+                ) 
+                VALUES ( 
+                    (SELECT player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                            )
+                    , #{listEntity.yearOfInfo}
+                    , #{listEntity.games}
+                    , #{listEntity.winNum}
+                    , #{listEntity.loseNum}
+                    , #{listEntity.saveNum}
+                    , #{listEntity.hold}
+                    , #{listEntity.holdPoint}
+                    , #{listEntity.completeGame}
+                    , #{listEntity.whitewashWinNum}
+                    , #{listEntity.noWalk}
+                    , #{listEntity.winRate}
+                    , #{listEntity.againstBatters}
+                    , #{listEntity.innings}
+                    , #{listEntity.hits}
+                    , #{listEntity.homeruns}
+                    , #{listEntity.fourBalls}
+                    , #{listEntity.gotWalked}
+                    , #{listEntity.deadBalls}
+                    , #{listEntity.wildPitch}
+                    , #{listEntity.bork}
+                    , #{listEntity.kk}
+                    , #{listEntity.allowedRuns}
+                    , #{listEntity.era}
+                )
+            END
+        </foreach>
+    </insert>
+       <insert id="insertHitterThisYear" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity">
+            <!--2024テーブルへ登録していない場合、挿入処理を行う-->
+            IF NOT EXISTS (
+                SELECT 1
+                FROM hitter_from_npb_official_2024
+                WHERE player_id = (
+                            SELECT player_id
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                         )
+            )
+            BEGIN
+                INSERT INTO hitter_from_npb_official_2024    (
+                        player_id, "year", games, plate_appearance
+                        ,at_bat, score,hit_num
+                        ,double_num, triple_num, homerun_num
+                        ,total_bases, rbi, steal_success
+                        ,steal_failure, bunt, sacrifice_fly
+                        ,fourball, got_walked, dead_ball
+                        ,kk, double_play, bat
+                        ,slu , obp
+                )
+                 VALUES (
+                        (SELECT player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                            ),
+                        #{listEntity.yearOfInfo}, #{listEntity.games}, #{listEntity.plateAppearance}
+                        ,#{listEntity.atBats}, #{listEntity.runs}, #{listEntity.totalHits}
+                        ,#{listEntity.doubles}, #{listEntity.triples}, #{listEntity.homeruns}
+                        ,#{listEntity.totalBases}, #{listEntity.rbi}, #{listEntity.stolenBases}
+                        ,#{listEntity.stolenBaseDeath}, #{listEntity.sacrificeBunts}, #{listEntity.sacrificeFlies}
+                        ,#{listEntity.fourBalls}, #{listEntity.gotWalked}, #{listEntity.deadBalls}
+                        ,#{listEntity.strikeOuts}, #{listEntity.doublePlay}, #{listEntity.battingAverage}
+                        ,#{listEntity.sluggingPercentage}, #{listEntity.onBasePercentage  }
+                )
+            END
+        </foreach>
+    </insert>
+    
+   <insert id="insertPitcherThisYear" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity">
+            <!--2024テーブルへ登録していない場合、挿入処理を行う-->
+            IF NOT EXISTS (
+                SELECT 1
+                FROM pitcher_from_npb_official_2024
+                WHERE player_id = (
+                            SELECT player_id
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                         )
+            )
+            BEGIN
+                INSERT INTO pitcher_from_npb_official_2024 ( 
+                    player_id
+                    , "year", games, win_num
+                    , lose_num, save_num, hold
+                    , hold_point
+                    , complete_game
+                    , whitewash_win_num
+                    , no_walk
+                    , win_rate
+                    , against_batters
+                    , innings
+                    , hits
+                    , homeruns
+                    , fourball
+                    , got_walked
+                    , dead_ball
+                    , wild_pitch
+                    , bork
+                    , kk
+                    , allowed_runs
+                    , earned_run_average
+                ) 
+                VALUES ( 
+                    (SELECT player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = #{listEntity.teamId}
+                                AND p.fname = #{listEntity.fname}
+                                AND p.lname = #{listEntity.lname} 
+                            )
+                    , #{listEntity.yearOfInfo}
+                    , #{listEntity.games}
+                    , #{listEntity.winNum}
+                    , #{listEntity.loseNum}
+                    , #{listEntity.saveNum}
+                    , #{listEntity.hold}
+                    , #{listEntity.holdPoint}
+                    , #{listEntity.completeGame}
+                    , #{listEntity.whitewashWinNum}
+                    , #{listEntity.noWalk}
+                    , #{listEntity.winRate}
+                    , #{listEntity.againstBatters}
+                    , #{listEntity.innings}
+                    , #{listEntity.hits}
+                    , #{listEntity.homeruns}
+                    , #{listEntity.fourBalls}
+                    , #{listEntity.gotWalked}
+                    , #{listEntity.deadBalls}
+                    , #{listEntity.wildPitch}
+                    , #{listEntity.bork}
+                    , #{listEntity.kk}
+                    , #{listEntity.allowedRuns}
+                    , #{listEntity.era}
+                )
+            END
+        </foreach>
+    </insert>
+   <update id="updateHitterThisYear" parameterType="java.util.List">
+       <foreach collection="conditionEntity" item="listEntity">
+            UPDATE 
+                dbo.hitter_from_npb_official
+            SET
+                games = #{listEntity.games}
+                , plate_appearance = #{listEntity.plateAppearance}
+                , at_bat = #{listEntity.atBats}
+                , score = #{listEntity.runs}
+                , hit_num = #{listEntity.totalHits}
+                , double_num = #{listEntity.doubles}
+                , triple_num = #{listEntity.triples}
+                , homerun_num = #{listEntity.homeruns}
+                , total_bases = #{listEntity.totalBases}
+                , rbi = #{listEntity.rbi}
+                , steal_success = #{listEntity.stolenBases}
+                , steal_failure = #{listEntity.stolenBaseDeath}
+                , bunt = #{listEntity.sacrificeBunts}
+                , sacrifice_fly = #{listEntity.sacrificeFlies}
+                , fourball = #{listEntity.fourBalls}
+                , got_walked = #{listEntity.gotWalked}
+                , dead_ball = #{listEntity.deadBalls}
+                , kk = #{listEntity.strikeOuts}
+                , double_play = #{listEntity.doublePlay}
+                , bat = #{listEntity.battingAverage}
+                , slu = #{listEntity.sluggingPercentage}
+                , obp = #{listEntity.onBasePercentage}
+            WHERE
+                player_id = (
+                        SELECT player_id 
+                            FROM player_master as m
+                            WHERE m.team_id = #{listEntity.teamId}
+                                AND m.fname = #{listEntity.fname}
+                                AND m.lname = #{listEntity.lname} 
+                            )
+        </foreach>
+    </update>
+    
+   <update id="updatePitcherThisYear" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity">
+            UPDATE 
+                dbo.pitcher_from_npb_official_2024 
+            SET
+                games = #{listEntity.games}
+                , win_num = #{listEntity.winNum}
+                , lose_num = #{listEntity.loseNum}
+                , save_num = #{listEntity.saveNum}
+                , hold = #{listEntity.hold}
+                , hold_point = #{listEntity.holdPoint}
+                , complete_game = #{listEntity.completeGame}
+                , whitewash_win_num = #{listEntity.whitewashWinNum}
+                , no_walk = #{listEntity.noWalk}
+                , win_rate = #{listEntity.winRate}
+                , against_batters = #{listEntity.againstBatters}
+                , innings = #{listEntity.innings}
+                , hits = #{listEntity.hits}
+                , homeruns = #{listEntity.homeruns}
+                , fourball = #{listEntity.fourBalls}
+                , got_walked = #{listEntity.gotWalked}
+                , dead_ball = #{listEntity.deadBalls}
+                , wild_pitch = #{listEntity.wildPitch}
+                , bork = #{listEntity.bork}
+                , kk = #{listEntity.kk}
+                , allowed_runs = #{listEntity.allowedRuns}
+                , earned_run_average = #{listEntity.era }
+            WHERE
+                player_id = (
+                    SELECT player_id 
+                        FROM player_master as m
+                        WHERE m.team_id = #{listEntity.teamId}
+                            AND m.fname = #{listEntity.fname}
+                            AND m.lname = #{listEntity.lname} 
+                    )
+
+        </foreach>
+    </update>
+    
+    <select id="getHitterFromTeam" parameterType ="int">
+        SELECT 
+            p.player_id as playerId,
+            m.fname as fname,
+            m.lname as lname,
+            p.bat as bat,
+            p.homerun_num as homerun,
+            p.obp as obp,
+            p.steal_success as steal,
+            p.bunt as bunt,
+            m.position
+        FROM 
+            hitter_from_npb_official_2024 as p
+        INNER JOIN
+            player_master as m   
+            ON  m.player_id = p.player_id 
+               
+        WHERE
+            m.team_id = #{conditionEntity}   
+    </select>
+    
+</mapper>
