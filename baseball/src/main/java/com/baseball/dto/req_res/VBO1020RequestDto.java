@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -15,34 +14,42 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper=false)
 public class VBO1020RequestDto {
 	
-	private List<BatterInput> batterOrder;
+	private String teamId;
+	
+	private List<BattersInput> battersInput;
 	
 	@Data
-	@Builder
-	public static class BatterInput {
-		@JsonProperty("fname")
+	public static class BattersInput {
+		
+		@JsonProperty("orderNo")
+		private String orderNo;
+		
+		@JsonProperty("playerId")
+		private String playerId;
+		
+//		@JsonProperty("fname")
 		private String fname;
 		
-		@JsonProperty("lname")
+//		@JsonProperty("lname")
 		private String lname;
-		
-		@JsonProperty("team")
-		private String team;
-		
-		@JsonProperty("bat")
+				
+//		@JsonProperty("bat")
 		private String bat;
 		
-		@JsonProperty("homerun")
+//		@JsonProperty("homerun")
 		private String homerun;
 		
-		@JsonProperty("obp")
+//		@JsonProperty("obp")
 		private String obp;
 		
-		@JsonProperty("steal")
+//		@JsonProperty("steal")
 		private String steal;
 		
-		@JsonProperty("bunt")
+//		@JsonProperty("bunt")
 		private String bunt;
+		
+//		@JsonProperty("position")
+		private String position;
 	}
 	
 }

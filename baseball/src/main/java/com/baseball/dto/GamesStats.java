@@ -1,8 +1,5 @@
 package com.baseball.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.Data;
 
 /**

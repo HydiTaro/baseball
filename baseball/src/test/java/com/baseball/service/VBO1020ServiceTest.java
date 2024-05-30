@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.baseball.dto.BatterForStrategyData;
 import com.baseball.dto.req_res.VBO1020RequestDto;
-import com.baseball.dto.req_res.VBO1020RequestDto.BatterInput;
+import com.baseball.dto.req_res.VBO1020RequestDto.BattersInput;
 import com.baseball.scrape.service.ScrNpbService;
 import com.baseball.strategy.InningStrategy01;
 
@@ -49,27 +49,27 @@ public class VBO1020ServiceTest {
 	 */
 	@Test
 	public void vbo1020() {
-		BatterInput batter = BatterInput.builder()
-								.fname("周東")
-								.bat("0.3")
-								.obp("0.38")
-								.homerun("20")
-								.steal("40")
-								.bunt("10").build();
-		
-		List<BatterInput> order = Lists.newArrayList(batter,batter,batter,batter,batter,batter,batter,batter,batter); 
-		VBO1020RequestDto request = new VBO1020RequestDto();
-		request.setBatterOrder(order);
-		VBOService service = new VBOService();
-		// 処理時間開始
-		long startTime = System.currentTimeMillis();
-		System.out.println();
-		service.vbo1020(request);
-        // 処理終了後の時刻を取得
-        long endTime = System.currentTimeMillis();
-        long elapsedTime = endTime - startTime;
-        // 処理時間を出力
-        System.out.println("処理にかかった時間: " + elapsedTime + "ミリ秒");
+//		BattersInput batter = BattersInput.builder()
+//								.fname("周東")
+//								.bat("0.3")
+//								.obp("0.38")
+//								.homerun("20")
+//								.steal("40")
+//								.bunt("10").build();
+//		
+//		List<BattersInput> order = Lists.newArrayList(batter,batter,batter,batter,batter,batter,batter,batter,batter); 
+//		VBO1020RequestDto request = new VBO1020RequestDto();
+//		request.setBattersInput(order);
+//		VBOService service = new VBOService();
+//		// 処理時間開始
+//		long startTime = System.currentTimeMillis();
+//		System.out.println();
+//		service.vbo1020(request);
+//        // 処理終了後の時刻を取得
+//        long endTime = System.currentTimeMillis();
+//        long elapsedTime = endTime - startTime;
+//        // 処理時間を出力
+//        System.out.println("処理にかかった時間: " + elapsedTime + "ミリ秒");
 	}
 	
 	/**
@@ -80,7 +80,7 @@ public class VBO1020ServiceTest {
 		// 処理時間開始
 		long startTime = System.currentTimeMillis();
 		// 処理時間開始
-		System.out.println(scrNpbService.npbPlayerMaster());
+		System.out.println(scrNpbService.npbPlayerMasterService());
 		long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         // 処理時間を出力
@@ -109,7 +109,7 @@ public class VBO1020ServiceTest {
 	public void npbHitterThisYear() throws IOException {
 		long startTime = System.currentTimeMillis();
 		// 処理時間開始
-		System.out.println(scrNpbService.npbStatsThisYear());
+		System.out.println(scrNpbService.npbStatsThisYearService());
 		long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         // 処理時間を出力

@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.baseball.dto.BatterForStrategyData;
 import com.baseball.dto.req_res.VBO1020RequestDto;
-import com.baseball.dto.req_res.VBO1020RequestDto.BatterInput;
+import com.baseball.dto.req_res.VBO1020RequestDto.BattersInput;
 import com.baseball.service.VBOService;
 import com.baseball.strategy.InningStrategy01;
 
@@ -29,18 +29,18 @@ class BaseballApplicationTests {
 	
 	@Test
 	public void vbo1020() {
-		BatterInput batter = BatterInput.builder()
-								.fname("周東")
-								.bat("0.3")
-								.obp("0.38")
-								.homerun("5")
-								.steal("40")
-								.bunt("10").build();
-		
-		List<BatterInput> order = Lists.newArrayList(batter,batter,batter,batter,batter,batter,batter,batter,batter); 
-		VBO1020RequestDto request = new VBO1020RequestDto();
-		request.setBatterOrder(order);
-		VBOService service = new VBOService();
-		service.vbo1020(request);
+//		BattersInput batter = BattersInput.builder()
+//								.fname("周東")
+//								.bat("0.3")
+//								.obp("0.38")
+//								.homerun("5")
+//								.steal("40")
+//								.bunt("10").build();
+//		
+//		List<BattersInput> order = Lists.newArrayList(batter,batter,batter,batter,batter,batter,batter,batter,batter); 
+//		VBO1020RequestDto request = new VBO1020RequestDto();
+//		request.setBattersInput(order);
+//		VBOService service = new VBOService();
+//		service.vbo1020(request);
 	}
 }

@@ -3,7 +3,7 @@ package com.baseball.dto;
 import lombok.Data;
 
 @Data
-public class Player {
+public class PlayerForStrategy {
     
     protected String fName,lName;
     protected int age;

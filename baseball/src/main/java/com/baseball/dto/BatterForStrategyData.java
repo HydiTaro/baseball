@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class BatterForStrategyData extends Player {
+public class BatterForStrategyData extends PlayerForStrategy {
 
 	// 打数
 	private int atBats;
@@ -31,8 +31,8 @@ public class BatterForStrategyData extends Player {
 //  (安打数＋四球＋死球）÷（打数＋四球＋死球＋犠飛)
 	private int kks;
 
-	private BatterForStrategyData(String name, int atBats, int plateAppearance, int obps, int bat, int singles, int doubles,
-			int triples, int homeruns, int kks, int fourballs, int bunts, int intsacrificeFlies) {
+	private BatterForStrategyData(String name, int atBats, int plateAppearance, int obps, int bat, int singles,
+			int doubles, int triples, int homeruns, int kks, int fourballs, int bunts, int intsacrificeFlies) {
 		this.fName = name;
 		this.atBats = atBats;
 		this.plateAppearance = plateAppearance;
@@ -49,6 +49,7 @@ public class BatterForStrategyData extends Player {
 
 	/**
 	 * BatterData for Strategy01
+	 * 
 	 * @param name
 	 * @param atBats
 	 * @param obp
@@ -62,8 +63,8 @@ public class BatterForStrategyData extends Player {
 	 * @param sacrificeFlyNum
 	 * @return
 	 */
-	public static BatterForStrategyData newBatterData01(String name, int atBats, double obp, double bat, int doubleNum, int tripleNum,
-			int homerunNum, int kkNum, int fourballNum, int buntNum, int sacrificeFlyNum) {
+	public static BatterForStrategyData newBatterData01(String name, int atBats, double obp, double bat, int doubleNum,
+			int tripleNum, int homerunNum, int kkNum, int fourballNum, int buntNum, int sacrificeFlyNum) {
 		int newBat = (bat > 1) ? (int) bat : (int) (1000 * bat);
 		int newSingles = newBat - 1000 * (doubleNum + tripleNum + homerunNum) / atBats;
 		int newDoubles = newSingles + 1000 * (+doubleNum) / atBats;
@@ -77,8 +78,8 @@ public class BatterForStrategyData extends Player {
 		int newSacrificeFlies = sacrificeFlyNum / atBats;
 		int newObp = (int) (1000 * obp);
 
-		return new BatterForStrategyData(name, atBats, atBats, newObp, newBat, newSingles, newDoubles, newTriples, newHomeruns,
-				newKks, newFourballs, newBunts, newSacrificeFlies);
+		return new BatterForStrategyData(name, atBats, atBats, newObp, newBat, newSingles, newDoubles, newTriples,
+				newHomeruns, newKks, newFourballs, newBunts, newSacrificeFlies);
 	}
 
 	/**
@@ -91,22 +92,22 @@ public class BatterForStrategyData extends Player {
 	 * @param steal
 	 * @param bunt
 	 */
-	public static BatterForStrategyData newBatterData02(String name, double obp, double bat, int homerunNum, int steal, int bunt) {
+	public static BatterForStrategyData newBatterData02(String name, double obp, double bat, int homerunNum, int steal,
+			int bunt) {
 		int atBats = 500;
 		int newBat = (bat >= 1) ? (int) bat : (int) (1000 * bat);
 		int tripleNum = (homerunNum * steal / 100);
 		// 本塁打が１０本以上の打者?安打の20%が二塁打:最低でも安打の10%は二塁打;
 		int doubleNum = (homerunNum >= 10) ? newBat / 5 : newBat / 10;
-		int newSingles = newBat -2*homerunNum-tripleNum -doubleNum;
+		int newSingles = newBat - 2 * homerunNum - tripleNum - doubleNum;
 		int newDoubles = newSingles + doubleNum;
-		int newTriples = newDoubles+tripleNum;
-		int newHomeruns = newTriples + 2*homerunNum; 
+		int newTriples = newDoubles + tripleNum;
+		int newHomeruns = newTriples + 2 * homerunNum;
 		int newObps = (int) (1000 * obp);
 		int newFourballs = newObps;
 		int newKks = newFourballs;
 		int newBunts = 1000 * bunt / atBats;
-		return new BatterForStrategyData(name, atBats, atBats, newObps, newBat, newSingles, newDoubles, newTriples, newHomeruns,
-				newKks, newFourballs, newBunts, 0);
+		return new BatterForStrategyData(name, atBats, atBats, newObps, newBat, newSingles, newDoubles, newTriples,
+				newHomeruns, newKks, newFourballs, newBunts, 0);
 	}
-	
 }

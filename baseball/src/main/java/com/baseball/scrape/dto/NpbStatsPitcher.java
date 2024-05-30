@@ -1,8 +1,10 @@
 package com.baseball.scrape.dto;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class NpbStatsPitcher extends NpbPlayerMasterDTO{
 	
 	private int games;

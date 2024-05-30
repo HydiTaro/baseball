@@ -7,125 +7,161 @@ import lombok.Data;
 
 public class CommonEnum {
 
-    public static enum ResultOfBat{
-        
-        HIT_SINGLE("一塁打","1"),
-        HIT_DOUBLE("二塁打","2"),
-        HIT_TRIPLE("三塁打","3"),
-        HIT_HOMERUN("本塁打","4"),
-        HIT_FOURBALL("四球","5"),
-        OUT_NONKK("凡退","10"),
-        OUT_KK("三振","11"),
-        OUT_BUNT("犠打","12"),
-        OUT_SACRIFICEFLY("犠飛","13");
+	public static enum ResultOfBat {
 
-        private final String name;
-        private final String value;
+		HIT_SINGLE("一塁打", "1"), HIT_DOUBLE("二塁打", "2"), HIT_TRIPLE("三塁打", "3"), HIT_HOMERUN("本塁打", "4"),
+		HIT_FOURBALL("四球", "5"), OUT_NONKK("凡退", "10"), OUT_KK("三振", "11"), OUT_BUNT("犠打", "12"),
+		OUT_SACRIFICEFLY("犠飛", "13");
 
-        ResultOfBat(String name, String value){
-            this.name = name;
-            this.value = value;
-        }
-        public String getValue() {
+		private final String name;
+		private final String value;
+
+		ResultOfBat(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		public String getValue() {
 			return value;
 		}
+
 		public String getName() {
 			return name;
 		}
-    }
-    public static enum ResultOfDef{
-        
-        NOERROR("エラーなし","0"),
-        ERROR("エラーあり","10");
+	}
 
-        private final String name;
-        private final String value;
-        
-        ResultOfDef(String name, String value){
-            this.name = name;
-            this.value = value;
-        }
-        public String getValue() {
-			return value;
-		}
-		public String getName() {
-			return name;
-		}
-    }
-    public static enum ResultOfRun{
-        
-        ONEBASE("一つ進塁成功","1"),
-        TWOBASE("二つ進塁成功","2"),
-        THIRDBASE("三つ進塁成功","3"),
-        OUT("走塁失敗","10");
+	public static enum ResultOfDef {
 
-        private final String name;
-        private final String value;
-        
-        ResultOfRun(String name, String value){
-            this.name = name;
-            this.value = value;
-        }
-        public String getValue() {
+		NOERROR("エラーなし", "0"), ERROR("エラーあり", "10");
+
+		private final String name;
+		private final String value;
+
+		ResultOfDef(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		public String getValue() {
 			return value;
 		}
+
 		public String getName() {
 			return name;
 		}
-    }
-    public static enum Base{
-    	FRSTBASE("一塁","1",false),
-    	SCNDBASE("二塁","2",false),
-    	THRDBASE("三塁","3",false);
-    	
-        private final String name;
-        private final String value;
-        private final boolean b;
-        
-        Base(String name, String value, boolean b){
-            this.name = name;
-            this.value = value;
-            this.b = b;
-        }
-        public String getValue() {
+	}
+
+	public static enum ResultOfRun {
+
+		ONEBASE("一つ進塁成功", "1"), TWOBASE("二つ進塁成功", "2"), THIRDBASE("三つ進塁成功", "3"), OUT("走塁失敗", "10");
+
+		private final String name;
+		private final String value;
+
+		ResultOfRun(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		public String getValue() {
 			return value;
 		}
+
 		public String getName() {
 			return name;
 		}
+	}
+
+	public static enum Base {
+		FRSTBASE("一塁", "1", false), SCNDBASE("二塁", "2", false), THRDBASE("三塁", "3", false);
+
+		private final String name;
+		private final String value;
+		private final boolean b;
+
+		Base(String name, String value, boolean b) {
+			this.name = name;
+			this.value = value;
+			this.b = b;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public String getName() {
+			return name;
+		}
+
 		public boolean isOnOff() {
 			return b;
 		}
-    }
-    
-    public static enum DominantHand{
-    	LEFT("右","1"),
-    	RIGHT("左","2"),
-    	BOTHSIDE("両方","0");
-    	
-        private final String name;
-        private final String value;
-        
-        DominantHand(String name, String value){
-            this.name = name;
-            this.value = value;
-        }
-        public String getValue() {
+	}
+
+	public static enum DominantHand {
+		LEFT("右", "1"), RIGHT("左", "2"), BOTHSIDE("両方", "0");
+
+		private final String name;
+		private final String value;
+
+		DominantHand(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		public String getValue() {
 			return value;
 		}
+
 		public String getName() {
 			return name;
 		}
-    }
-    
-    public static enum Position{
-    	Pitcher("投手","001"),
-    	Catcher("捕手","002");
+	}
+
+	public static enum Position {
+		PITCHER("投手", "001"), CATCHER("捕手", "002"), FIRSTBASE("一塁手", "003"), SECONDBASE("二塁手", "004"),
+		THIRDBASE("三塁手", "005"), SHORTSTOP("遊撃手", "006"), LEFTFIELD("左翼手", "007"), CENTERFIELD("中堅手", "008"),
+		RIGHTFIELD("右翼手", "009"), DH("DH", "010");
+
+		private final static Set<Position> setOfPacificRule = EnumSet.of(PITCHER, CATCHER, FIRSTBASE, SECONDBASE,
+				THIRDBASE, SHORTSTOP, LEFTFIELD, CENTERFIELD, RIGHTFIELD, DH);
+		private final static Set<Position> setOfCentralRule = EnumSet.of(PITCHER, CATCHER, FIRSTBASE, SECONDBASE,
+				THIRDBASE, SHORTSTOP, LEFTFIELD, CENTERFIELD, RIGHTFIELD);
+
+		private final String name;
+		private final String value;
+
+		Position(String name, String value) {
+			this.name = name;
+			this.value = value;
+		}
+
+		public String getValue() {
+			return value;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public static Set<Position> getAllTeam() {
+			return setOfPacificRule;
+		}
+
+		public static Set<Position> getNow12Teams() {
+			return setOfCentralRule;
+		}
+	}
+
+	public static enum Leag{
+    	
+    	PACIFIC("パリーグ","1"),
+    	CENTRAL("セリーグ","2");
     	
         private final String name;
         private final String value;
         
-        Position(String name, String value){
+        Leag(String name, String value){
             this.name = name;
             this.value = value;
         }
@@ -185,6 +221,5 @@ public class CommonEnum {
 			return setNow12;
 		}
     }
-    
-
 }
+	

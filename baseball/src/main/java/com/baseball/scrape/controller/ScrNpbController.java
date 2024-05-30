@@ -18,7 +18,7 @@ public class ScrNpbController {
 	public int scrapePlayerMasterStats() throws IOException{
 		long startTime = System.currentTimeMillis();
 		//スクレイピングデータをリストに変換 (リーグ変数でセ・パ方式に変換)
-		int temp = scrNpbService.npbPlayerMaster();
+		int temp = scrNpbService.npbPlayerMasterService();
 		long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         // 処理時間を出力
@@ -31,7 +31,7 @@ public class ScrNpbController {
 	public int scrapeHitterStats() throws IOException{
 		long startTime = System.currentTimeMillis();
 		//スクレイピングデータをリストに変換 (リーグ変数でセ・パ方式に変換)
-		int temp = scrNpbService.npbHitAndPitchStatsPerTeamAndYear();
+		int temp = scrNpbService.npbHitAndPitchStatsPerTeamAndYearService();
 		long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         // 処理時間を出力
@@ -48,7 +48,7 @@ public class ScrNpbController {
 	public int scrapeStatThisYear() throws IOException{
 		long startTime = System.currentTimeMillis();
 		//スクレイピングデータをリストに変換 (リーグ変数でセ・パ方式に変換)
-		int temp = scrNpbService.npbStatsThisYear();
+		int temp = scrNpbService.npbStatsThisYearService();
 		long endTime = System.currentTimeMillis();
         long elapsedTime = endTime - startTime;
         // 処理時間を出力

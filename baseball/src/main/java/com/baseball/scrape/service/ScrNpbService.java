@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +43,9 @@ public class ScrNpbService {
 	 * @return
 	 * @throws IOException
 	 */
-	public int npbPlayerMaster() throws IOException {
+	public int npbPlayerMasterService() throws IOException {
 		// 戻り値
 		int insertCount = 0;
-		List<String> sitesSymbols = new ArrayList<String>(Arrays.asList("b","p"));
 		// URLの作成(チームと年度ごとにURLが異なる)
 		//　スクレイピングでデータを取得
 		//　テーブルに打者データを挿入
@@ -55,55 +53,18 @@ public class ScrNpbService {
 			// ノーマルなURL
 			if (team != CommonEnum.Team.BUFFERORS && team != CommonEnum.Team.OLDBAYSTARS
 					&& team != CommonEnum.Team.BAYSTARS) {
-				getAndInsertMaster(sitesSymbols,team, firstYear,Constants.thisYear);
-				// オリックスは年度によってURLがイレギュラー
+				getAndInsertMaster(team, firstYear,Constants.thisYear);
+			// オリックスは年度によってURLがイレギュラー
 			} else if (team == CommonEnum.Team.BUFFERORS) {
-				// URLに使用されている識別子（投手または打者）
-				List<String> pitchOrBat = Arrays.asList("p", "b");
-				// オリックス：2018年まで
-				for (int i = firstYear; i <= 2018; i++) {
-					StringBuilder url = new StringBuilder(scrapeUrl);
-					url.append(i);
-					url.append(stats);
-					for (String s : pitchOrBat) {
-						StringBuilder suffixUrl = new StringBuilder();
-						suffixUrl.append(s);
-						suffixUrl.append(middleNameOfHtml);
-						suffixUrl.append("bs");
-						suffixUrl.append(suffixOfHtml);
-						System.out.println(url + suffixUrl.toString());
-						if(s.equals("b")) {
-							System.out.println(url.toString() + suffixUrl.toString());
-							Elements scrapedData = Jsoup.connect(url.toString() + suffixUrl.toString()).get()
-									.select("#stdivmaintbl").first().select("tr");
-//							setPlayerMasterH(masterHitData,scrapedDataHitter, team.getValue(),i);
-							scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterP(scrapedData,team.getValue(),i));
-						} else if(s.equals("p")) {
-							Elements scrapedData = Jsoup.connect(url.toString() + suffixUrl.toString()).get()
-									.select("#stdivmaintbl").first().select("tr");
-//							setPlayerMasterP(masterPitchData,scrapedDataPitcher, team.getValue(),i);
-							scrapeNpbOfficialDao.updatePlayerMasterThrowHand(setPlayerMasterH(scrapedData,team.getValue(),i));
-						}
-//						Elements scrapingData = Jsoup.connect(url.toString() + suffixUrl.toString()).get()
-//								.select("#stdivmaintbl").first().select("tr");
-//						insertCount += scrapeNpbOfficialDao
-//								.insertPlayerMaster(setPlayerMaster(scrapingData, team.getValue(), s, i));
-					}
-				}
-				// オリックス：2019年から
-				getAndInsertMaster(sitesSymbols,team, 2019, Constants.thisYear);
-				// TBS横浜
+				getAndInsertMaster(team,firstYear,Constants.thisYear);
+			// TBS横浜
 			} else if (team == CommonEnum.Team.OLDBAYSTARS) {
-				getAndInsertMaster(sitesSymbols,team, firstYear, 2011);
-				// DeNA横浜
+				getAndInsertMaster(team, firstYear, 2011);
+			// DeNA横浜
 			} else {
-				getAndInsertMaster(sitesSymbols,team, 2012,Constants.thisYear);
+				getAndInsertMaster(team, 2012,Constants.thisYear);
 			}
-//			scrapeNpbOfficialDao.insertPlayerMaster(masterHitData);
-//			scrapeNpbOfficialDao.updatePlayerMasterThrowHand(masterPitchData);
 		}
-		
-		
 		return insertCount;
 	}
 
@@ -117,6 +78,7 @@ public class ScrNpbService {
 	private String suffixOfHtml = ".html";
 	private String urlP = "p";
 	private String urlB = "b";
+	private String urlBs = "bs";
 
 	/**
 	 * ウェブサイトから取得した選手マスタデータをテーブルへ挿入
@@ -127,30 +89,64 @@ public class ScrNpbService {
 	 * @param toYear
 	 * @throws IOException
 	 */
-	private void getAndInsertMaster(List<String> sitesSymbols,CommonEnum.Team team, int firstYear, int toYear)
+	private void getAndInsertMaster(CommonEnum.Team team, int firstYear, int toYear)
 			throws IOException {
-		// URLに使用されている識別子（投手または打者）
-			for (int i = firstYear; i <= toYear; i++) {
-				StringBuilder url = new StringBuilder(scrapeUrl);
-				url.append(i);
-				url.append(stats);
-				String teamPrefix = team.getPrefix();
-//				for (String s : sitesSymbols) {
-//					if(s.equals("b")) {
-						System.out.println(url + makeUrl(urlB, teamPrefix));
-						Elements scrapedDataHitter = Jsoup.connect(url.toString() + makeUrl(urlB, teamPrefix)).get()
-								.select("#stdivmaintbl").first().select("tr");
-						scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterH(scrapedDataHitter, team.getValue(),i));
-//					} else if(s.equals("p")) {
-						System.out.println(url + makeUrl(urlP, teamPrefix));
-						Elements scrapedDataPitcher = Jsoup.connect(url.toString() + makeUrl(urlP, teamPrefix)).get()
-								.select("#stdivmaintbl").first().select("tr");
-						scrapeNpbOfficialDao.updatePlayerMasterThrowHand(setPlayerMasterP(scrapedDataPitcher, team.getValue(),i));
+			if(!team.equals(CommonEnum.Team.BUFFERORS)) {
+				// データ取得は年度ごと
+				for (int i = firstYear; i <= toYear; i++) {
+					StringBuilder url = new StringBuilder(scrapeUrl);
+					url.append(i);
+					url.append(stats);
+					String teamPrefix = team.getPrefix();
+					// 打者のデータを取得
+					getHitterMaster(i,url+makeUrl(urlB,teamPrefix).toString(),team.getValue());
+					// 投手のデータを取得
+					getPitchMaster(i,url+makeUrl(urlP,teamPrefix).toString(),team.getValue());
+				}
+			} else {
+				String bs = "bs";
+				String teamValue = "b";
+				// データ取得は年度ごと
+				for (int i = firstYear; i <= toYear; i++) {
+					String orixPrefixBs = (i<2019)? urlBs : team.getPrefix();
+//					if(i >= 2019) {
+//						orixPrefixBs = "b";
 //					}
-//				}
+					StringBuilder url = new StringBuilder(scrapeUrl);
+					url.append(i);
+					url.append(stats);
+					// 打者のデータを取得
+					getHitterMaster(i,url+makeUrl(urlB,orixPrefixBs).toString(),teamValue);
+					// 投手のデータを取得
+					getPitchMaster(i,url+makeUrl(urlP,orixPrefixBs).toString(),teamValue);
+				}
 			}
 	}
-
+	/**
+	 * 打者のマスタデータを取得する
+	 * @param year
+	 * @param url
+	 * @param teamId
+	 */
+	private void getHitterMaster(int year,String url,String teamId) throws IOException {
+		System.out.println(url);
+		Elements scrapedDataHitter = Jsoup.connect(url).get()
+				.select("#stdivmaintbl").first().select("tr");
+		scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterH(scrapedDataHitter, teamId,year));
+	}
+	/**
+	 *　投手のマスタデータを取得する
+	 * @param year
+	 * @param url
+	 * @param teamId
+	 * @throws IOException
+	 */
+	private void getPitchMaster(int year,String url,String teamId) throws IOException {
+		System.out.println(url);
+		Elements scrapedPitcherData = Jsoup.connect(url).get()
+				.select("#stdivmaintbl").first().select("tr");
+		scrapeNpbOfficialDao.updatePlayerMasterThrowHand(setPlayerMasterP(scrapedPitcherData, teamId,year));
+	}
 	/**
 	 * サイトから取得したデータを、DBへ挿入するDTOへ成形する
 	 * 
@@ -172,11 +168,10 @@ public class ScrNpbService {
 			stat.setYearOfInfo(year);
 			stat.setTeamId(teamId);
 			String[] data = scrapedData.get(i).text().split(" ");
-				stat.setPosition(CommonEnum.Position.Pitcher.getValue());
-				stat.setNameAndHandP(data);
+			stat.setPosition(CommonEnum.Position.PITCHER.getValue());
+			stat.setNameAndHandP(data);
 			stats.add(stat);
 		}
-		System.out.println(" ");
 		// 選手情報の配列をリターン
 		return stats;
 	}
@@ -203,10 +198,8 @@ public class ScrNpbService {
 			stat.setTeamId(teamId);
 			String[] data = scrapedData.get(i).text().split(" ");
 			stat.setNameAndHandH(data);
-//			list.add(stat);
 			stats.add(stat);
 		}
-		System.out.println(" ");
 		// 選手情報の配列をリターン
 		return stats;
 	}
@@ -217,49 +210,161 @@ public class ScrNpbService {
 	 * @return
 	 * @throws IOException
 	 */
-	public int npbHitAndPitchStatsPerTeamAndYear() throws IOException {
-		StringBuilder url;
-		// URLに使用されている識別子（投手または打者）
-		List<String> pitchOrBat = Arrays.asList("b");
+	public int npbHitAndPitchStatsPerTeamAndYearService() throws IOException {
 		int insertCount = 0;
 		// リーグと年情報を引き渡しNPB公式サイトをスクレイピング
 		for (CommonEnum.Team team : CommonEnum.Team.getAllTeam()) {
 			// ノーマルなURL
 			if (team != CommonEnum.Team.BUFFERORS && team != CommonEnum.Team.OLDBAYSTARS
 					&& team != CommonEnum.Team.BAYSTARS) {
-				getAndInsertHitAndPitchData(pitchOrBat, team, firstYear, Constants.thisYear);
+				getAndInsertPerTeamAndYear(team, firstYear, Constants.thisYear);
 				// オリックスは年度によってURLがイレギュラー
 			} else if (team == CommonEnum.Team.BUFFERORS) {
-				// オリックス：2018年まで
-				for (int i = firstYear; i <= 2018; i++) {
-					url = new StringBuilder(scrapeUrl);
-					url.append(i);
-					url.append(stats);
-					for (String s : pitchOrBat) {
-						StringBuilder suffixUrl = new StringBuilder();
-						suffixUrl.append(s);
-						suffixUrl.append(middleNameOfHtml);
-						suffixUrl.append("bs");
-						suffixUrl.append(suffixOfHtml);
-						System.out.println(url + suffixUrl.toString());
-						Elements scrapingData = Jsoup.connect(url.toString() + suffixUrl.toString()).get()
-								.select("#stdivmaintbl").first().select("tr");
-						insertCount += scrapeNpbOfficialDao
-								.insertHitterPerTeamAndYear(setHittingStats(scrapingData, team.getValue(), i));
-					}
-				}
 				// オリックス：2019年から
-				getAndInsertHitAndPitchData(pitchOrBat, team, 2019, Constants.thisYear);
+				getAndInsertPerTeamAndYear(team, firstYear, Constants.thisYear);
 				
 			} else if (team == CommonEnum.Team.OLDBAYSTARS) {// TBS横浜
-				getAndInsertHitAndPitchData(pitchOrBat, team, firstYear, 2011);
+				getAndInsertPerTeamAndYear(team, firstYear, 2011);
 			} else {// DeNA
-				getAndInsertHitAndPitchData(pitchOrBat, team, 2012, Constants.thisYear);
+				getAndInsertPerTeamAndYear(team, 2012, Constants.thisYear);
 			}
 		}
 		return insertCount;
 	}
 
+	/**
+	 * ウェブサイトから取得した年度野手データをテーブルへ挿入
+	 * 
+	 * @param sitesSymbol
+	 * @param team
+	 * @param firstYear
+	 * @param toYear
+	 * @throws IOException
+	 */
+	private void getAndInsertPerTeamAndYear(CommonEnum.Team team, int firstYear, int toYear)
+			throws IOException {
+		if(!team.equals(CommonEnum.Team.BUFFERORS)) {
+			for (int i = firstYear; i < toYear; i++) {
+				StringBuilder url = new StringBuilder(scrapeUrl);
+				url.append(i);
+				url.append(stats);
+				String teamPrefix = team.getPrefix();
+				// 打者の年・チーム別データを取得する
+				getHitterPerTeamAndYear(i,url+makeUrl(urlB,teamPrefix).toString(),team.getValue());
+				// 投手の年・チーム別データを取得する
+				getPitchPerTeamAndYear(i,url+makeUrl(urlP,teamPrefix).toString(),team.getValue());
+			}
+		} else {
+			String teamValue = "b";
+			// データ取得は年度ごと
+			for (int i = firstYear; i <= toYear; i++) {
+				String orixPrefixBs = (i < 2019)? urlBs :team.getPrefix();
+				StringBuilder url = new StringBuilder(scrapeUrl);
+				url.append(i);
+				url.append(stats);
+				// 打者のデータを取得
+				getHitterMaster(i,url+makeUrl(urlB,orixPrefixBs).toString(),teamValue);
+				// 投手のデータを取得
+				getPitchMaster(i,url+makeUrl(urlP,orixPrefixBs).toString(),teamValue);
+			}
+		}
+	}
+	/**
+	 * 打者の年・チーム別データを取得する
+	 * @param year
+	 * @param url
+	 * @param teamId
+	 */
+	private void getHitterPerTeamAndYear(int year,String url,String teamId) throws IOException {
+		System.out.println(url);
+		Elements scrapedDataHitter = Jsoup.connect(url).get()
+				.select("#stdivmaintbl").first().select("tr");
+		scrapeNpbOfficialDao.insertHitterPerTeamAndYear(setHittingStats(scrapedDataHitter, teamId,year));
+	}
+	/**
+	 *　投手の年・チーム別データを取得する
+	 * @param year
+	 * @param url
+	 * @param teamId
+	 * @throws IOException
+	 */
+	private void getPitchPerTeamAndYear(int year,String url,String teamId) throws IOException {
+		System.out.println(url);
+		Elements scrapedPitcherData = Jsoup.connect(url).get()
+				.select("#stdivmaintbl").first().select("tr");
+		scrapeNpbOfficialDao.insertPitcherPerTeamAndYear(setPitchingStats(scrapedPitcherData, teamId,year));
+	}
+
+	/**
+	 * NPBサイトから2024年度の打者成績と投手成績を取得する
+	 * 最終的には、更新処理を削除と挿入に変更したい
+	 * @return
+	 * @throws IOException
+	 */
+	public int npbStatsThisYearService() throws IOException {
+		int insertCount = 0;
+		// リーグと年情報を引き渡しNPB公式サイトをスクレイピング
+		for (CommonEnum.Team team : CommonEnum.Team.getNow12Teams()) {
+			System.out.println(team.getFullName());
+			// ウェブサイトから取得した今年の選手データをテーブルへ挿入
+			getAndInsertThisYear(team);
+		}
+		return insertCount;
+	}
+
+	/**
+	 * ウェブサイトから取得した今年の選手データをテーブルへ１．挿入、２．更新 
+	 * 
+	 * @param team
+	 * @throws IOException
+	 */
+	private void getAndInsertThisYear(CommonEnum.Team team)
+			throws IOException {
+		StringBuilder url = new StringBuilder(scrapeUrl);
+		url.append(Constants.thisYear);
+		url.append(stats);
+		String teamPrefix = team.getPrefix();
+		// 打者データの取得
+		Elements scrapingData = Jsoup.connect(url.toString() + makeUrl(urlB, teamPrefix)).get().select("#stdivmaintbl")
+				.first().select("tr");
+		// 取得先のURLを表示
+		System.out.println(url + makeUrl(urlB, teamPrefix));
+		//データの整形
+		List<NPBStatsHitter> hitData = setHittingStats(scrapingData, team.getValue(), Constants.thisYear);
+		// マスタテーブルを更新
+		scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterH(scrapingData, team.getValue(),Constants.thisYear));
+		// 初出場の選手は事前に登録されていないためまず挿入処理が必要
+		scrapeNpbOfficialDao.insertHitterThisYear(hitData);
+		// 登録済みの本年データの更新が必要
+		scrapeNpbOfficialDao.updateHitterThisYear(hitData);
+		// 投手データの取得
+		scrapingData = Jsoup.connect(url.toString() + makeUrl(urlP, teamPrefix)).get().select("#stdivmaintbl")
+				.first().select("tr");
+		// 取得先のURLを表示
+		System.out.println(url + makeUrl(urlP, teamPrefix));
+		//データの整形
+		List<NpbStatsPitcher> pitchData = setPitchingStats(scrapingData, team.getValue(),Constants.thisYear);
+		// 初出場の選手は事前に登録されていないためまず挿入処理が必要
+		scrapeNpbOfficialDao.insertPitcherThisYear(pitchData);
+		// 登録済みの本年データの更新が必要
+		scrapeNpbOfficialDao.updatePitcherThisYear(pitchData);
+	}
+	
+	/**
+	 * URLの可変部分作成
+	 * @param sitesSymbols
+	 * @param teamPrefix
+	 * @return
+	 */
+	private String makeUrl(String sitesSymbols, String teamPrefix) {
+		StringBuilder suffixUrl = new StringBuilder();
+		suffixUrl.append(sitesSymbols);
+		suffixUrl.append(middleNameOfHtml);
+		suffixUrl.append(teamPrefix);
+		suffixUrl.append(suffixOfHtml);
+		return suffixUrl.toString();
+	}
+	
 	/**
 	 * サイトから取得したデータを、DBへ挿入するために成形する
 	 * 
@@ -348,91 +453,6 @@ public class ScrNpbService {
 		// 選手情報の配列をリターン
 		return stats;
 	}
-
-	/**
-	 * ウェブサイトから取得した年度野手データをテーブルへ挿入
-	 * 
-	 * @param sitesSymbol
-	 * @param team
-	 * @param firstYear
-	 * @param toYear
-	 * @throws IOException
-	 */
-	private void getAndInsertHitAndPitchData(List<String> sitesSymbols, CommonEnum.Team team, int firstYear, int toYear)
-			throws IOException {
-		for (int i = firstYear; i < toYear; i++) {
-			StringBuilder url = new StringBuilder(scrapeUrl);
-			url.append(i);
-			url.append(stats);
-			String teamPrefix = team.getPrefix();
-//			for (String s : sitesSymbols) {
-				System.out.println(url + makeUrl(urlB, teamPrefix));
-				Elements scrapingData = Jsoup.connect(url.toString() + makeUrl(urlB, teamPrefix)).get()
-						.select("#stdivmaintbl").first().select("tr");
-				scrapeNpbOfficialDao.insertHitterPerTeamAndYear(setHittingStats(scrapingData, team.getValue(), i));
-				
-				System.out.println(url + makeUrl(urlP, teamPrefix));
-				scrapingData = Jsoup.connect(url.toString() + makeUrl(urlP, teamPrefix)).get()
-						.select("#stdivmaintbl").first().select("tr");
-				scrapeNpbOfficialDao.insertPitcherPerTeamAndYear(setPitchingStats(scrapingData, team.getValue(), i));
-//			}
-		}
-	}
-
-	/**
-	 * NPBサイトから2024年度の打者成績と投手成績を取得する
-	 * 最終的には、更新処理を削除と挿入に変更したい
-	 * @return
-	 * @throws IOException
-	 */
-	public int npbStatsThisYear() throws IOException {
-		int insertCount = 0;
-		// リーグと年情報を引き渡しNPB公式サイトをスクレイピング
-		for (CommonEnum.Team team : CommonEnum.Team.getNow12Teams()) {
-			System.out.println(team.getFullName());
-			// ウェブサイトから取得した今年の選手データをテーブルへ挿入
-			getAndInsertThisYear(team);
-		}
-		return insertCount;
-	}
-
-	/**
-	 * ウェブサイトから取得した今年の選手データをテーブルへ１．挿入、２．更新 
-	 * 
-	 * @param team
-	 * @throws IOException
-	 */
-	private void getAndInsertThisYear(CommonEnum.Team team)
-			throws IOException {
-		StringBuilder url = new StringBuilder(scrapeUrl);
-		url.append(Constants.thisYear);
-		url.append(stats);
-		String teamPrefix = team.getPrefix();
-		// 打者データの取得
-		Elements scrapingData = Jsoup.connect(url.toString() + makeUrl(urlB, teamPrefix)).get().select("#stdivmaintbl")
-				.first().select("tr");
-		// 取得先のURLを表示
-		System.out.println(url + makeUrl(urlB, teamPrefix));
-		//データの整形
-		List<NPBStatsHitter> hitData = setHittingStats(scrapingData, team.getValue(), Constants.thisYear);
-		// マスタテーブルを更新
-		scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterH(scrapingData, team.getValue(),Constants.thisYear));
-		// 初出場の選手は事前に登録されていないためまず挿入処理が必要
-		scrapeNpbOfficialDao.insertHitterThisYear(hitData);
-		// 登録済みの本年データの更新が必要
-		scrapeNpbOfficialDao.updateHitterThisYear(hitData);
-		// 投手データの取得
-		scrapingData = Jsoup.connect(url.toString() + makeUrl(urlP, teamPrefix)).get().select("#stdivmaintbl")
-				.first().select("tr");
-		// 取得先のURLを表示
-		System.out.println(url + makeUrl(urlP, teamPrefix));
-		//データの整形
-		List<NpbStatsPitcher> pitchData = setPitchingStats(scrapingData, team.getValue(),Constants.thisYear);
-		// 初出場の選手は事前に登録されていないためまず挿入処理が必要
-		scrapeNpbOfficialDao.insertPitcherThisYear(pitchData);
-		// 登録済みの本年データの更新が必要
-		scrapeNpbOfficialDao.updatePitcherThisYear(pitchData);
-	}
 	
 	/**
 	 * サイトから取得したデータを、DBへ挿入するために成形する
@@ -459,7 +479,7 @@ public class ScrNpbService {
 //			String scrapedLine = scrapingData.get(i).text();
 //			List<String>  data= StringUtils.splitBySpace(scrapedLine);
 			stat.setNameAndHandH(data);
-			System.out.print(data[0]);
+//			System.out.print(data[0]);
 			// 表の左端が "*" or "+"
 			if (data[0].equals("*") || data[0].equals("+")) {
 				
@@ -578,20 +598,5 @@ public class ScrNpbService {
 		}
 		// 選手情報の配列をリターン
 		return stats;
-	}
-	
-	/**
-	 * URLの可変部分作成
-	 * @param sitesSymbols
-	 * @param teamPrefix
-	 * @return
-	 */
-	private String makeUrl(String sitesSymbols, String teamPrefix) {
-		StringBuilder suffixUrl = new StringBuilder();
-		suffixUrl.append(sitesSymbols);
-		suffixUrl.append(middleNameOfHtml);
-		suffixUrl.append(teamPrefix);
-		suffixUrl.append(suffixOfHtml);
-		return suffixUrl.toString();
 	}
 }
