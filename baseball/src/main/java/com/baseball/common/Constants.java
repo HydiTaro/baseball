@@ -23,11 +23,29 @@ public class Constants {
 	public static final String Scored_Three = "三点入りました";
 	public static final String Scored_Forth = "四点入りました";
 	
+	public static final String Kanji_Pitcher = "投";
+	public static final String Kanji_Catcher = "捕";
+	public static final String Kanji_First = "一";
+	public static final String Kanji_Second = "二";
+	public static final String Kanji_Third = "三";
+	public static final String Kanji_Short = "遊";
+	public static final String Kanji_Left = "左";
+	public static final String Kanji_Center = "中";
+	public static final String Kanji_Right = "右";
+	public static final String Kanji_Dh = "指";
+	
+	public static final String Kanji_Migi = "右";
+	public static final String Kanji_Hidari = "左";
+	
 	public static final String SLASH = "/";
 	
 	public static int thisYear = getCurrentYear();
 	
     public static int getCurrentYear() {
         return Year.now().getValue();
+    }
+    
+    private Constants() {
+    	
     }
 }

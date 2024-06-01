@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="com.baseball.dao.ScrapeYahooDao">
+       <insert id="insertScrapeYahoo" parameterType="java.util.List">
+        <foreach collection="conditionEntity" item="listEntity">
+            <!--試合データがテーブルへ登録していない場合、挿入処理を行う-->
+            IF NOT EXISTS (
+                SELECT 1
+                FROM starting_from_yahoo
+                WHERE game_id = #{listEntity.gameId}
+                AND team_id = (SELECT TOP 1 team_id
+                                FROM player_master as p 
+                                WHERE
+                                    p.fname = #{listEntity.fname_1}
+                                    AND p.lname = #{listEntity.lname_1}
+                                ORDER BY
+                                    p.start_year desc 
+                            )
+            )
+            BEGIN
+                INSERT INTO starting_from_yahoo    (
+                    game_id, team_id
+                    , player_id_1, position_1
+                    , player_id_2, position_2
+                    , player_id_3, position_3
+                    , player_id_4, position_4
+                    , player_id_5, position_5
+                    , player_id_6, position_6
+                    , player_id_7, position_7
+                    , player_id_8, position_8
+                    , player_id_9, position_9
+                    , game_date
+                )
+                 VALUES 
+                 (
+                     #{listEntity.gameId} 
+                     , (SELECT TOP 1 team_id
+                            FROM player_master as p 
+                            WHERE
+                                p.fname = #{listEntity.fname_1}
+                                AND p.lname = #{listEntity.lname_1}
+                            ORDER BY
+                                p.start_year desc 
+                            )
+                    , (SELECT TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_1}
+                                AND p.lname = #{listEntity.lname_1}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_1}
+                    , (SELECT TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_2}
+                                AND p.lname = #{listEntity.lname_2}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_2}
+                    , (SELECT TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_3}
+                                AND p.lname = #{listEntity.lname_3}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_3}
+                    , (SELECT TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_4}
+                                AND p.lname = #{listEntity.lname_4}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_4}
+                    , (SELECT TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_5}
+                                AND p.lname = #{listEntity.lname_5}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_5}
+                    , (SELECT TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_6}
+                                AND p.lname = #{listEntity.lname_6}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_6}
+                    , (SELECT  TOP 1 player_id 
+                            FROM player_master as p
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_7}
+                                AND p.lname = #{listEntity.lname_7}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_7}
+                    , (SELECT  TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_8}
+                                AND p.lname = #{listEntity.lname_8}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_8}
+                    , (SELECT  TOP 1 player_id 
+                            FROM player_master as p 
+                            WHERE p.team_id = team_id
+                                AND p.fname = #{listEntity.fname_9}
+                                AND p.lname = #{listEntity.lname_9}
+                            ORDER BY
+                                p.start_year desc 
+                            ), #{listEntity.position_9}
+                    , #{listEntity.gameDate}
+                )   
+            END
+        </foreach>
+    </insert>
+</mapper>

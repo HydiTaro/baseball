@@ -116,9 +116,9 @@ public class ScrNpbService {
 					url.append(i);
 					url.append(stats);
 					// 打者のデータを取得
-					getHitterMaster(i,url+makeUrl(urlB,orixPrefixBs).toString(),teamValue);
+					getHitterMaster(i,url+makeUrl(urlB,orixPrefixBs).toString(),CommonEnum.Team.BUFFERORS.getValue());
 					// 投手のデータを取得
-					getPitchMaster(i,url+makeUrl(urlP,orixPrefixBs).toString(),teamValue);
+					getPitchMaster(i,url+makeUrl(urlP,orixPrefixBs).toString(),CommonEnum.Team.BUFFERORS.getValue());
 				}
 			}
 	}
