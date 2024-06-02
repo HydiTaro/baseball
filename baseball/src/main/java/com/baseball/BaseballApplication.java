@@ -1,19 +1,17 @@
 package com.baseball;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-
-import com.baseball.dto.BatterForStrategyData;
-import com.baseball.scrape.service.ScrNpbService;
-import com.baseball.strategy.InningStrategy;
-import com.baseball.strategy.InningStrategy01;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class BaseballApplication {
 	
 	public static void main(String[] args) {
 		System.out.println("Started!");
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		System.out.println(encoder.encode("Aa123456"));
+		System.out.println(encoder.encode("QWE123"));
 		SpringApplication.run(BaseballApplication.class, args);
 		
 //        BatterData y = new BatterData("山川",500,330,250, 20 , 0, 35, 100,100,0,15);

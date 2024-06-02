@@ -14,6 +14,9 @@ import com.baseball.common.Constants;
 import com.baseball.dao.ScrapeYahooDao;
 import com.baseball.scrape.dto.YahooStarting;
 
+/**
+ *　打順データ取得
+ */
 @Service
 public class ScrYahooService {
 
@@ -30,7 +33,7 @@ public class ScrYahooService {
 	/**
 	 * Yahooのサイトの試合No
 	 */
-	private static int gameNo = 2021020291;
+	private static int gameNo = 2021020309;
 
 	public void startingPerGameService() {
 
@@ -45,6 +48,9 @@ public class ScrYahooService {
 			try {
 				Elements scrapedStartingData = Jsoup.connect(makeUrl(temp + gameNo)).get().select("#async-starting")
 						.first().select("tr");
+				if(scrapedStartingData.isEmpty()) {
+					break;
+				}
 				setStarting(startings, temp, scrapedStartingData);
 			} catch (IOException e) {
 				break;
@@ -53,7 +59,6 @@ public class ScrYahooService {
 			}
 		}
 		scrapeYahooDao.insertScrapeYahoo(startings);
-		updateGameNo(temp);
 		return insertCount;
 	}
 
@@ -92,6 +97,7 @@ public class ScrYahooService {
 		setStringArrayToDto(startings,scrapedData);
 		System.out.println(startings.getFname_2()+" "+startings.getPosition_8());
 		twoStarting.add(startings);
+		updateGameNo(1);
 		System.out.println(twoStarting.get(0).getGameId()+" "+twoStarting.get(0).getPosition_1());
 		System.out.println(twoStarting.get(1).getGameId()+" "+twoStarting.get(1).getPosition_3());
 	}

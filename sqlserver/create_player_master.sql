@@ -2,7 +2,7 @@ create table [dbo].[player_master](
   [player_id] INT IDENTITY(1, 1)
   ,[fname] nvarchar(16) not null
   ,[lname] nvarchar(16) not null
-  ,[position] char(3) not null
+  ,[position] char(3) not null  
   , [throw_hand] char(1)
   , [hit_hand] char(1)
   , [age] SMALLINT

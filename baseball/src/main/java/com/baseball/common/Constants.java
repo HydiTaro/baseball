@@ -39,6 +39,10 @@ public class Constants {
 	
 	public static final String SLASH = "/";
 	
+//	public static final String JWT_ITEM_USER_FLG = "user_id";
+	public static final String JWT_ITEM_USER_ID = "user_id";
+	
+	
 	public static int thisYear = getCurrentYear();
 	
     public static int getCurrentYear() {
