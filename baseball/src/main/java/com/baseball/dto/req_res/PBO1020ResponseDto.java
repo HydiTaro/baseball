@@ -10,5 +10,5 @@ public class PBO1020ResponseDto {
 	 */
 	private String checkResult;
 	
-	private String point;
+	private int score;
 }

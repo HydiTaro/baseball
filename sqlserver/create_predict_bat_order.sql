@@ -1,29 +1,29 @@
 create table [dbo].[predict_bat_order](
     [user_id] INT not null
-    ,[game_id] INT not null
+    , [game_date] char(8) 
     ,[team_id] CHAR(2) not null
+    ,[predict_score] TINYINT 
     , [player_id_1] INT 
-    -- , [position_1] CHAR(1) 
+    , [position_1] CHAR(1) 
     , [player_id_2] INT 
-    -- , [position_2] CHAR(1) 
+    , [position_2] CHAR(1) 
     , [player_id_3] INT 
-    -- , [position_3] CHAR(1) 
+    , [position_3] CHAR(1) 
     , [player_id_4] INT 
-    -- , [position_4] CHAR(1) 
+    , [position_4] CHAR(1) 
     , [player_id_5] INT 
-    -- , [position_5] CHAR(1) 
+    , [position_5] CHAR(1) 
     , [player_id_6] INT 
-    -- , [position_6] CHAR(1) 
+    , [position_6] CHAR(1) 
     , [player_id_7] INT 
-    -- , [position_7] CHAR(1) 
+    , [position_7] CHAR(1) 
     , [player_id_8] INT 
-    -- , [position_8] CHAR(1) 
+    , [position_8] CHAR(1) 
     , [player_id_9] INT 
-    -- , [position_9] CHAR(1) 
-    , [predit_date] char(8) 
+    , [position_9] CHAR(1) 
     , [regist_date] DATETIME DEFAULT CURRENT_TIMESTAMP
     , [update_date] DATETIME DEFAULT CURRENT_TIMESTAMP
-    , primary key (user_id,game_id,team_id)
+    , primary key (user_id,team_id,game_date)
 );
 --コメント付与
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description'
@@ -34,15 +34,6 @@ EXEC sys.sp_addextendedproperty  @name=N'MS_Description'
                                 ,@level1name=N'predict_bat_order'
                                 ,@level2type=N'COLUMN'
                                 ,@level2name=N'user_id'
-
-EXEC sys.sp_addextendedproperty  @name=N'MS_Description'
-                                ,@value=N'試合のID'
-                                ,@level0type=N'SCHEMA'
-                                ,@level0name=N'dbo'
-                                ,@level1type=N'TABLE'
-                                ,@level1name=N'predict_bat_order'
-                                ,@level2type=N'COLUMN'
-                                ,@level2name=N'game_id'
                                  
 EXEC sys.sp_addextendedproperty  @name=N'MS_Description'
                                 ,@value=N'チームID'

@@ -33,17 +33,13 @@ public class ScrYahooService {
 	/**
 	 * Yahooのサイトの試合No
 	 */
-	private static int gameNo = 2021020309;
-
-	public void startingPerGameService() {
-
-	}
+	private static int gameNo = 2021020315;
 
 	public int getAndInsertStarting() {
 		int insertCount = 0;
 		List<YahooStarting> startings = new ArrayList<>();
 		int temp = 0;
-		for (temp = 0; temp < 6; temp++) {
+		for (temp = 0; temp < 200; temp++) {
 			System.out.println(makeUrl(temp + gameNo));
 			try {
 				Elements scrapedStartingData = Jsoup.connect(makeUrl(temp + gameNo)).get().select("#async-starting")
@@ -55,10 +51,9 @@ public class ScrYahooService {
 			} catch (IOException e) {
 				break;
 				// TODO Auto-generated catch block
-//				e.printStackTrace();
 			}
 		}
-		scrapeYahooDao.insertScrapeYahoo(startings);
+		scrapeYahooDao.insertBatOreder(startings);
 		return insertCount;
 	}
 
@@ -80,6 +75,7 @@ public class ScrYahooService {
 		}
 		setStringArrayToDto(startings,scrapedData);
 		System.out.println(startings.getFname_6()+" "+startings.getPosition_9());
+		// 左側のチームをセット
 		twoStarting.add(startings);
 		
 		startings = YahooStarting.builder().gameId(temp + gameNo).build();
@@ -96,14 +92,11 @@ public class ScrYahooService {
 		}
 		setStringArrayToDto(startings,scrapedData);
 		System.out.println(startings.getFname_2()+" "+startings.getPosition_8());
+		// 右側のチームをセット
 		twoStarting.add(startings);
-		updateGameNo(1);
+//		gameNo++;
 		System.out.println(twoStarting.get(0).getGameId()+" "+twoStarting.get(0).getPosition_1());
 		System.out.println(twoStarting.get(1).getGameId()+" "+twoStarting.get(1).getPosition_3());
-	}
-
-	private void updateGameNo(int insertCount) {
-		gameNo += insertCount;
 	}
 
 	/**

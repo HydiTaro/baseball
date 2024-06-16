@@ -48,5 +48,87 @@
         ORDER BY 
             p.innings desc 
     </select>
+    
+      <!-- <insert id="insertPredictBatOrder" parameterType="InsertPredictBatOrderCondition">-->
+  <insert id="insertPredictBatOrder">
+        <!--予測打順がテーブルへ登録していない場合、挿入処理を行う-->
+        IF NOT EXISTS (
+            SELECT 1
+            FROM predict_bat_order
+            WHERE user_id = #{conditionEntity.userId}
+            AND game_date = #{conditionEntity.gameDate}
+            AND team_id = #{conditionEntity.teamId}
+        )
+        BEGIN
+            INSERT INTO predict_bat_order    (
+                user_id,game_date, team_id
+                , player_id_1, position_1
+                , player_id_2, position_2
+                , player_id_3, position_3
+                , player_id_4, position_4
+                , player_id_5, position_5
+                , player_id_6, position_6
+                , player_id_7, position_7
+                , player_id_8, position_8
+                , player_id_9, position_9
+            )
+             VALUES 
+             (
+                #{conditionEntity.userId}
+                , #{conditionEntity.gameDate}
+                , #{conditionEntity.teamId}
+                , #{conditionEntity.player_id_1}
+                , #{conditionEntity.position_1}
+                , #{conditionEntity.player_id_2}
+                , #{conditionEntity.position_2}
+                , #{conditionEntity.player_id_3}
+                , #{conditionEntity.position_3}
+                , #{conditionEntity.player_id_4}
+                , #{conditionEntity.position_4}
+                , #{conditionEntity.player_id_5}
+                , #{conditionEntity.position_5}
+                , #{conditionEntity.player_id_6}
+                , #{conditionEntity.position_6}
+                , #{conditionEntity.player_id_7}
+                , #{conditionEntity.position_7}
+                , #{conditionEntity.player_id_8}
+                , #{conditionEntity.position_8}
+                , #{conditionEntity.player_id_9}
+                , #{conditionEntity.position_9}
+            )   
+        END
+    </insert>
+    
+    <!--<select id="getLatestPredictBatOrder" parameterType="SelectLatestPredictBatOrderCondition">-->
+    <select id="getLatestPredictBatOrder">
+        SELECT
+            game_id
+            , team_id
+            , player_id_1
+            , position_1
+            , player_id_2
+            , position_2
+            , player_id_3
+            , position_3
+            , player_id_4
+            , position_4
+            , player_id_5
+            , position_5
+            , player_id_6
+            , position_6
+            , player_id_7
+            , position_7
+            , player_id_8
+            , position_8
+            , player_id_9
+            , position_9 
+        FROM
+            predict_bat_order
+        WHERE
+            user_id = #{conditionEntity.userId}
+            AND team_id = #{conditionEntity.teamId}
+        ORDER BY
+            game_id desc
+    </select>
 
 </mapper>

@@ -1,0 +1,15 @@
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    ports:
+      - 1433:1433
+    container_name: zenn_mssql
+    volumes:
+      - mssql-data:/var/opt/mssql/data
+    environment:
+      ACCEPT_EULA: sa
+      SA_PASSWORD: sqlserver
+      MSSQL_PID: Express
+
+volumes:
+  mssql-data: {}

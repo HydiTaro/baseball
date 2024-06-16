@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class PBO1020RequestDto {
 	
-	private String player_id;
+	private String userId;
+	
+	private String teamId;
 }

@@ -1,3 +1,16 @@
+// 追加
+buildscript {
+    ext {
+        dockerComposePluginVersion = "0.17.6"
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "com.avast.gradle:gradle-docker-compose-plugin:${dockerComposePluginVersion}"
+    }
+}
 plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.2.6-SNAPSHOT'
@@ -35,9 +48,15 @@ dependencies {
 	runtimeOnly 'com.microsoft.sqlserver:mssql-jdbc'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
+    testImplementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3'
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+  useJUnitPlatform()
+}
+
+apply plugin: "docker-compose"
+//追加
+dockerCompose {
+    useComposeFiles = ["docker/docker-compose.yml"]
 }

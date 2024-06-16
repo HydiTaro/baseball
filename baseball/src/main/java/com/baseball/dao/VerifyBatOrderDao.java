@@ -5,6 +5,9 @@ import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.baseball.dao.condition.InsertPredictBatOrderCondition;
+import com.baseball.dao.condition.SelectLatestPredictBatOrderCondition;
+import com.baseball.dao.condition.SelectPredictBatOrderDtoResponse;
 import com.baseball.dto.req_res.VBO1010ResponseDto.BattersForVerify;
 import com.baseball.dto.req_res.VBO1030ResponseDto.PitchersForVerify;
 
@@ -28,4 +31,10 @@ public interface VerifyBatOrderDao {
 	 */
 	List<PitchersForVerify> getPitchersFromTeam(
 			@Param("conditionEntity") int teamId);
+	
+	void insertPredictBatOrder(
+			@Param("conditionEntity") InsertPredictBatOrderCondition dto);
+	
+	SelectPredictBatOrderDtoResponse getLatestPredictBatOrder(
+			@Param("conditionEntity") SelectLatestPredictBatOrderCondition selectLatestPredictBatOrder);
 }

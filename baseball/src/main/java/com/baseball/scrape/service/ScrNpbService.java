@@ -396,8 +396,8 @@ public class ScrNpbService {
 				Double OnBasePercentage = Double.parseDouble(data[23]);
 
 				stat.setGames(Integer.parseInt(data[2]));// 試合
-				stat.setAtBats(Integer.parseInt(data[4]));// 打数
 				stat.setPlateAppearance(Integer.parseInt(data[3]));// 打席
+				stat.setAtBats(Integer.parseInt(data[4]));// 打数
 				stat.setRuns(Integer.parseInt(data[5]));// 得点
 				stat.setTotalHits(Integer.parseInt(data[6]));
 				stat.setDoubles(Integer.parseInt(data[7]));
@@ -422,10 +422,9 @@ public class ScrNpbService {
 				// 以降statマップにセット
 				Double SluggingPercentage = Double.parseDouble(data[21]);
 				Double OnBasePercentage = Double.parseDouble(data[22]);
-//				System.out.println(data[0]);
 				stat.setGames(Integer.parseInt(data[1]));
-				stat.setAtBats(Integer.parseInt(data[2]));
-				stat.setPlateAppearance(Integer.parseInt(data[3]));
+				stat.setPlateAppearance(Integer.parseInt(data[2]));
+				stat.setAtBats(Integer.parseInt(data[3]));
 				stat.setRuns(Integer.parseInt(data[4]));
 				stat.setTotalHits(Integer.parseInt(data[5]));
 				stat.setDoubles(Integer.parseInt(data[6]));

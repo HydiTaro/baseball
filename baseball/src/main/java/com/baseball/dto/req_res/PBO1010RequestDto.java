@@ -6,10 +6,16 @@ import lombok.Data;
 @Data
 public class PBO1010RequestDto {
 	
-	private PredictOrder order;
+	private String teamId;
 	
-	@Data
-	public static class PredictOrder{
+	private String userId;
+	
+//	private PredictOrder order;
+	
+	private String gameDate; 
+//	
+//	@Data
+//	public static class PredictOrder{
 		private String postion_1;
 		private String player_id_1;
 		
@@ -36,5 +42,5 @@ public class PBO1010RequestDto {
 		
 		private String postion_9;
 		private String player_id_9;
-	}
+//	}
 }

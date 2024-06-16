@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
         
 <mapper namespace="com.baseball.dao.ScrapeYahooDao">
-       <insert id="insertScrapeYahoo" parameterType="java.util.List">
+   <insert id="insertBatOreder" parameterType="java.util.List">
         <foreach collection="conditionEntity" item="listEntity">
             <!--試合データがテーブルへ登録していない場合、挿入処理を行う-->
             IF NOT EXISTS (
@@ -122,4 +122,34 @@
             END
         </foreach>
     </insert>
+    
+    <select id="getLatestOreder" parameterType ="String">
+        SELECT
+            game_id
+            , team_id
+            , player_id_1
+            , position_1
+            , player_id_2
+            , position_2
+            , player_id_3
+            , position_3
+            , player_id_4
+            , position_4
+            , player_id_5
+            , position_5
+            , player_id_6
+            , position_6
+            , player_id_7
+            , position_7
+            , player_id_8
+            , position_8
+            , player_id_9
+            , position_9 
+        FROM
+            starting_from_yahoo 
+        WHERE
+            team_id = #{conditionEntity}   
+        ORDER BY
+            game_id desc
+    </select>
 </mapper>

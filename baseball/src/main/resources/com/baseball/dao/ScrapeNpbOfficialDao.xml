@@ -4,43 +4,6 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
         
 <mapper namespace="com.baseball.dao.ScrapeNpbOfficialDao">
-    <!--
-    <insert id="insertPlayerMaster" parameterType="java.util.List">
-        INSERT INTO player_master (
-            fname,
-            lname,
-            position, 
-            throw_hand,
-            hit_hand,
-            age,
-            start_year,
-            fin_year,
-            team_id
-        )
-        VALUES
-         <foreach collection="conditionEntity" item="listEntity" separator=",">
-           (
-                #{listEntity.fname},
-                #{listEntity.lname}, 
-                #{listEntity.position},
-                #{listEntity.throwHand},
-                #{listEntity.hitHand},
-                #{listEntity.age},
-                #{listEntity.yearOfInfo}),
-                #{listEntity.yearOfInfo},
-                #{listEntity.teamId}
-            WHERE
-                NOT EXISTS (
-                    SELECT 1
-                    FROM player_master
-                    WHERE team_id = #{listEntity.teamId}
-                      AND fname = #{listEntity.fname}
-                      AND lname = #{listEntity.lname}
-                )
-            )
-        </foreach>
-    </insert>
-    -->
     <insert id="insertPlayerMaster" parameterType="java.util.List">
         <foreach collection="conditionEntity" item="listEntity" separator=";">
             IF NOT EXISTS (
@@ -326,7 +289,7 @@
    <update id="updateHitterThisYear" parameterType="java.util.List">
        <foreach collection="conditionEntity" item="listEntity">
             UPDATE 
-                dbo.hitter_from_npb_official
+                dbo.hitter_from_npb_official_2024
             SET
                 games = #{listEntity.games}
                 , plate_appearance = #{listEntity.plateAppearance}

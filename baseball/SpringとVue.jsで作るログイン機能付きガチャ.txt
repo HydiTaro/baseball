@@ -1,0 +1,12 @@
+SpringとVue.jsで作るログイン機能付きガチャ
+
+調べること
+CSRFが有効になるとPOST送信ができなくなる
+GETリクエストはCSRFやCORSの設定は不要
+
+UsernamePasswordAuthenticationFilterを継承したクラスを作成する
+・ログインURLの設定
+・認証成功後の処理を設定
+UserDetailsServiceの実装クラスを作成
+・	DBからレコードを取得する
+JWTにてtokenを発行/解析する
