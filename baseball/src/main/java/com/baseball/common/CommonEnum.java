@@ -179,6 +179,7 @@ public class CommonEnum {
     	EAGLES("東北楽天ゴールデンイーグルス","イーグルス","13","e"),
     	FIGHTERS("北海道日本ハムファイターズ","ファイターズ","14","f"),
     	MARINES("千葉ロッテマリーンズ","マリーンズ","15","m"),
+    	// 
     	BUFFERORS("オリックス・バッファローズ","バッファローズ","16","b"),
     	GIANTS("読売ジャイアンツ","ジャイアンツ","21","g"),
     	DRAGONS("中日ドラゴンズ","ドラゴンズ","22","d"),
@@ -214,7 +215,7 @@ public class CommonEnum {
 		public String getPrefix() {
 			return prefix;
 		}
-		public static Set<Team> getAllTeam(){
+		public static Set<Team> getAllTeamInHistory(){
 			return setOfAll;
 		}
 		public static Set<Team> getNow12Teams(){
