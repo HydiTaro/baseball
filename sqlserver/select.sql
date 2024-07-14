@@ -1,1 +1,1 @@
-SELECT player_id, fname, lname  FROM player_master p WHERE fname = '石川' and team_id = 's'
+SELECT player_id, fname, lname, position  FROM player_master p WHERE fname = '石山' and team_id = 's'

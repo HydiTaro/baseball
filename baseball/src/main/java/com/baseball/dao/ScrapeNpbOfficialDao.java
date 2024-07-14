@@ -22,12 +22,6 @@ public interface ScrapeNpbOfficialDao {
 	int insertPlayerMaster(
 			@Param("conditionEntity") List<NpbPlayerMasterDTO> condition);
 	/**
-	 * @param condition
-	 * @return
-	 */
-	int updatePlayerMasterThrowHand(
-			@Param("conditionEntity") List<NpbPlayerMasterDTO> condition);
-	/**
 	 * NPBの打者データ挿入
 	 * 
 	 * @param conditionEntity
@@ -52,7 +46,7 @@ public interface ScrapeNpbOfficialDao {
 	int insertHitterThisYear(
 			@Param("conditionEntity") List<NPBStatsHitter> condition);
 	/**
-	 * NPBの打者データ挿入
+	 * NPBの投手データ挿入
 	 * 
 	 * @param conditionEntity
 	 * @return 挿入件数

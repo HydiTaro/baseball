@@ -18,6 +18,10 @@ import com.baseball.scrape.dto.NPBStatsHitter;
 import com.baseball.scrape.dto.NpbPlayerMasterDTO;
 import com.baseball.scrape.dto.NpbStatsPitcher;
 
+/**
+ * This Year機能は後回し。
+ * マスターデータ&2024の通算成績機能のみ
+ */
 @Service
 public class ScrNpbService {
 
@@ -296,7 +300,6 @@ public class ScrNpbService {
 	 * URLの部品
 	 */
 	private String suffixOfHtml = ".html";
-//	private String middleNameOfHtml = "1_";
 	/**
 	 * URLの可変部分作成
 	 * @param sitesSymbols

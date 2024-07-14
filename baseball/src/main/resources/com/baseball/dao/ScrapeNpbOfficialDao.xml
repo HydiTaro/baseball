@@ -39,20 +39,6 @@
             END
         </foreach>
     </insert>
-        
-    <update id="updatePlayerMasterThrowHand">
-        <foreach collection="conditionEntity" item="listEntity">
-            UPDATE 
-                player_master
-            SET
-                position = #{listEntity.position},
-                throw_hand = #{listEntity.throwHand}                
-            WHERE 
-                team_id = #{listEntity.teamId}
-                AND fname = #{listEntity.fname}
-                AND lname = #{listEntity.lname}
-        </foreach>
-    </update>
     
    <insert id="insertHitterPerTeamAndYear" parameterType="java.util.List">
         <foreach collection="conditionEntity" item="listEntity">
