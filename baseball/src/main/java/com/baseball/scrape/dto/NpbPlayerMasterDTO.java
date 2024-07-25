@@ -1,10 +1,13 @@
 package com.baseball.scrape.dto;
 
+import java.util.List;
+
 import com.baseball.common.CommonEnum;
 
 import lombok.Data;
 
 @Data
+//@Builder
 public class NpbPlayerMasterDTO {
 
 	/**
@@ -44,47 +47,46 @@ public class NpbPlayerMasterDTO {
 	 */
 	private int age;
 
-	/**
-	 * 取得したデータから、名前と利き手を設定する
-	 */
-	public void setNameAndHandP(String[] data) {
-		setFnameAndLname(data);
-		if (data[0].equals("*")) {// 表の左端が "*" or "+"の場合は左投げ
-			// 名字と名前を区別したい
-			setThrowHand(CommonEnum.DominantHand.LEFT.getValue());// 打席
-		} else if(!data[0].equals("+")) {
-			// 名字と名前を区別したい
-			setThrowHand(CommonEnum.DominantHand.RIGHT.getValue());// 打席
-		} else {
-			setThrowHand(CommonEnum.DominantHand.BOTHSIDE.getValue());// 打席
-		}
-	}
-
-	/**
-	 * 取得したデータから、名前と利き手を設定する
-	 */
-	public void setNameAndHandH(String[] data) {
-		setFnameAndLname(data);
-		if (data[0].equals("*")) {// 表の左端が "*" or "+"の場合は左投げ
-			// 名字と名前を区別したい
-			setHitHand(CommonEnum.DominantHand.LEFT.getValue());// 打席（左打ちまたは両打ち）
-		} else if(!data[0].equals("+")) {
-			// 名字と名前を区別したい
-			setHitHand(CommonEnum.DominantHand.RIGHT.getValue());// 打席
-		} else {
-			setHitHand(CommonEnum.DominantHand.BOTHSIDE.getValue());// 打席
-		}
+//	/**
+//	 * 取得したデータから、名前と利き手を設定する
+//	 */
+//	public void setNameAndHandP(List<String> data) {
+//		setFnameAndLname(data);
+//		if (data.get(0).equals("*")) {// 表の左端が "*" or "+"の場合は左投げ
+//			// 名字と名前を区別したい
+//			setThrowHand(CommonEnum.DominantHand.LEFT.getValue());// 打席
+//		} else if(!data.get(0).equals("+")) {
+//			// 名字と名前を区別したい
+//			setThrowHand(CommonEnum.DominantHand.RIGHT.getValue());// 打席
+//		} else {
+//			setThrowHand(CommonEnum.DominantHand.BOTHSIDE.getValue());// 打席
+//		}
+//	}
+//
+//	/**
+//	 * 取得したデータから、名前と利き手を設定する
+//	 */
+//	public void setNameAndHandH(List<String> data) {
+//		setFnameAndLname(data);
+//		if (data.get(0).equals("*")) {// 表の左端が "*" or "+"の場合は左投げ
+//			// 名字と名前を区別したい
+//			setHitHand(CommonEnum.DominantHand.LEFT.getValue());// 打席（左打ちまたは両打ち）
+//		} else if(!data.get(0).equals("+")) {
+//			// 名字と名前を区別したい
+//			setHitHand(CommonEnum.DominantHand.RIGHT.getValue());// 打席
+//		} else {
+//			setHitHand(CommonEnum.DominantHand.BOTHSIDE.getValue());// 打席
+//		}
+//	}
 	
-	}
-	
-	private void setFnameAndLname(String[] data) {
-		String[] fnameAndLname = data[1].split("　");
-		if (data[0].equals("*") || data[0].equals("+")) {// 表の左端が "*" or "+"の場合は左投げ
+	public void setFnameAndLname(List<String> data) {
+		String[] fnameAndLname = data.get(1).split("　");
+		if (data.get(0).equals("*") || data.get(0).equals("+")) {// 表の左端が "*" or "+"の場合は左投げ
 			setFname(fnameAndLname[0]);
 		// 右投げ
 		} else {
 			// 名字と名前を区別したい
-			fnameAndLname = data[0].split("　");
+			fnameAndLname = data.get(0).split("　");
 			setFname(fnameAndLname[0]);
 		}
 		setLname((fnameAndLname.length == 2) ? fnameAndLname[1]

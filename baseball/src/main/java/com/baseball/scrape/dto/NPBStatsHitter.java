@@ -1,10 +1,12 @@
 package com.baseball.scrape.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 @Data
-@EqualsAndHashCode(callSuper = false)	
+@EqualsAndHashCode(callSuper = false)
+//@Builder
 public class NPBStatsHitter extends NpbPlayerMasterDTO{
 	
 //	/**
@@ -55,4 +57,15 @@ public class NPBStatsHitter extends NpbPlayerMasterDTO{
 	 * 失策
 	 */
 	private int errors;
+	
+	public  NPBStatsHitter() {
+		
+	}
+	
+//	
+//	@Builder
+//	public NPBStatsHitter(int playerId,String fname,String lname, String position, String throwHand,String hitHand, int yearofInfo,String teamId,int age
+//			int games,) {
+//		
+//	}
 }
