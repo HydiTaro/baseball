@@ -37,6 +37,36 @@
                     #{listEntity.teamId}
                 )
             END
+            IF EXISTS (
+                SELECT 1
+                FROM player_master
+                WHERE team_id = #{listEntity.teamId}
+                  AND fname = #{listEntity.fname}
+                  AND lname = #{listEntity.lname}
+            )
+            BEGIN
+                INSERT INTO player_master (
+                    fname,
+                    lname,
+                    position, 
+                    throw_hand,
+                    hit_hand,
+                    age,
+                    fin_year,
+                    team_id
+                )
+                VALUES (
+                    #{listEntity.fname},
+                    #{listEntity.lname}, 
+                    #{listEntity.position},
+                    #{listEntity.throwHand},
+                    #{listEntity.hitHand},
+                    #{listEntity.age},
+                    #{listEntity.yearOfInfo},
+                    #{listEntity.teamId}
+                )
+            END
+            
         </foreach>
     </insert>
     
@@ -156,7 +186,19 @@
             END
         </foreach>
     </insert>
-       <insert id="insertHitterThisYear" parameterType="java.util.List">
+    <select id="getPlayerMasterOfThisYear">
+        SELECT
+            p.teamId,
+            p.fname,
+            p.lname,
+            p.position
+        FROM
+            player_master as p 
+        WHERE
+            start_year = 2024
+    </select>
+    
+    <insert id="insertHitterThisYear" parameterType="java.util.List">
         <foreach collection="conditionEntity" item="listEntity">
             <!--2024テーブルへ登録していない場合、挿入処理を行う-->
             IF NOT EXISTS (

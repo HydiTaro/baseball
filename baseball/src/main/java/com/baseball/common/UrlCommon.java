@@ -6,8 +6,14 @@ public class UrlCommon {
 	
 	private static String suffixOfHtml = ".html";
 	
-	@Value("${url.npb.official.prev}")
+//	@Value("${url.npb.official.prev}")
 	private static String npbScrapeUrl;
+	
+	public UrlCommon(
+			@Value("${url.npb.official.prev}") String npbScrapeUrl) {
+		UrlCommon.npbScrapeUrl = npbScrapeUrl;
+	}
+	
 	/**
 	 * NPBサイトのURLの部品
 	 */
@@ -20,6 +26,7 @@ public class UrlCommon {
 	 * @return
 	 */
 	public static String makeNpbBatUrl(String teamPrefix,int year) {
+		System.out.println("==makeNpbPitchUrl=="+teamPrefix+year);
 		StringBuilder suffixUrl = new StringBuilder(npbScrapeUrl);
 		suffixUrl.append(year);
 		suffixUrl.append(npbMiddleNameOfBatUrl);
@@ -35,6 +42,8 @@ public class UrlCommon {
 	 * @return
 	 */
 	public static String makeNpbPitchUrl(String teamPrefix,int year) {
+		System.out.println("==npbScrapeUrl=="+npbScrapeUrl);
+		System.out.println("==makeNpbPitchUrl=="+teamPrefix+year);
 		StringBuilder suffixUrl = new StringBuilder(npbScrapeUrl);
 		suffixUrl.append(year);
 		suffixUrl.append(npbMiddleNameOfPitchUrl);

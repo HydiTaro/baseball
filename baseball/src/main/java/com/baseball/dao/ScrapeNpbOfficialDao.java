@@ -37,6 +37,15 @@ public interface ScrapeNpbOfficialDao {
 	 */
 	int insertPitcherPerTeamAndYear(
 			@Param("conditionEntity") List<NpbStatsPitcher> condition);
+	
+	/**
+	 * NPBのマスタデータの
+	 * 
+	 * @param conditionEntity
+	 * @return 今年のマスタデータ取得
+	 */
+	List<NpbPlayerMasterDTO> getPlayerMasterOfThisYear();
+	
 	/**
 	 * NPBの打者データ挿入
 	 * 

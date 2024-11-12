@@ -23,6 +23,7 @@ import com.baseball.scrape.dto.NpbStatsPitcher;
  * This Year機能は後回し。
  * マスターデータ&2024の通算成績機能のみ
  * 20240726の日次最新データ更新は、DBからマスタデータ取得（700件程度）後、新規の選手のみ別枠で送信
+ * ⇒上記は、アンチSQLパターンを参照
  */
 @Service
 public class ScrNpbService {
@@ -79,7 +80,7 @@ public class ScrNpbService {
 			for (int i = firstYear; i <= toYear; i++) {
 				
 				// 投手のデータを取得
-				System.out.println(UrlCommon.makeNpbPitchUrl(teamPrefix,i).toString());
+//				System.out.println(UrlCommon.makeNpbPitchUrl(teamPrefix,i).toString());
 				Elements scrapedPitcherData = Jsoup.connect(UrlCommon.makeNpbPitchUrl(teamPrefix,i).toString()).get()
 						.select("#stdivmaintbl").first().select("tr");
 				scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterP(scrapedPitcherData, teamPrefix,i));
@@ -269,6 +270,8 @@ public class ScrNpbService {
 		
 		//データの整形
 		List<NPBStatsHitter> hitData = setHittingStats(scrapingData, teamPrefix, Constants.thisYear);
+		
+		
 		// マスタテーブルを更新
 //		scrapeNpbOfficialDao.insertPlayerMaster(setPlayerMasterH(scrapingData, teamPrefix,Constants.thisYear));
 		// 初出場の選手は事前に登録されていないためまず挿入処理が必要
